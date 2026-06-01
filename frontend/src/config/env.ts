@@ -1,0 +1,38 @@
+type AppEnv = {
+  REACT_APP_BACKEND_URL: string;
+  REACT_APP_FACEBOOK_APP_ID: string;
+  REACT_APP_REQUIRE_BUSINESS_MANAGEMENT: boolean;
+  REACT_APP_NAME_SYSTEM: string;
+  REACT_APP_NUMBER_SUPPORT: string;
+  REACT_APP_HOURS_CLOSE_TICKETS_AUTO: string;
+  REACT_APP_PRIMARY_COLOR: string;
+  REACT_APP_PRIMARY_DARK: string;
+};
+
+const runtimeEnv = typeof window !== "undefined" ? (window as any).ENV || {} : {};
+
+const getEnv = (key: string, fallback = ""): string => {
+  const runtimeValue = runtimeEnv[key];
+  if (runtimeValue !== undefined && runtimeValue !== "") return runtimeValue;
+  return ((process.env as Record<string, string | undefined>)[key] as string) || fallback;
+};
+
+const env: AppEnv = {
+  REACT_APP_BACKEND_URL: getEnv("REACT_APP_BACKEND_URL"),
+  REACT_APP_FACEBOOK_APP_ID: getEnv("REACT_APP_FACEBOOK_APP_ID"),
+  REACT_APP_REQUIRE_BUSINESS_MANAGEMENT: getEnv("REACT_APP_REQUIRE_BUSINESS_MANAGEMENT", "FALSE").toUpperCase() === "TRUE",
+  REACT_APP_NAME_SYSTEM: getEnv("REACT_APP_NAME_SYSTEM", "ChatIA"),
+  REACT_APP_NUMBER_SUPPORT: getEnv("REACT_APP_NUMBER_SUPPORT"),
+  REACT_APP_HOURS_CLOSE_TICKETS_AUTO: getEnv("REACT_APP_HOURS_CLOSE_TICKETS_AUTO", "9999"),
+  REACT_APP_PRIMARY_COLOR: getEnv("REACT_APP_PRIMARY_COLOR", "#6B46C1"),
+  REACT_APP_PRIMARY_DARK: getEnv("REACT_APP_PRIMARY_DARK", "#4C1D95")
+};
+export default env;
+export const BACKEND_URL: string = env.REACT_APP_BACKEND_URL;
+export const FACEBOOK_APP_ID: string = env.REACT_APP_FACEBOOK_APP_ID;
+export const REQUIRE_BUSINESS_MANAGEMENT: boolean = env.REACT_APP_REQUIRE_BUSINESS_MANAGEMENT;
+export const NAME_SYSTEM: string = env.REACT_APP_NAME_SYSTEM;
+export const NUMBER_SUPPORT: string = env.REACT_APP_NUMBER_SUPPORT;
+export const HOURS_CLOSE_TICKETS_AUTO: string = env.REACT_APP_HOURS_CLOSE_TICKETS_AUTO;
+export const PRIMARY_COLOR: string = env.REACT_APP_PRIMARY_COLOR;
+export const PRIMARY_DARK: string = env.REACT_APP_PRIMARY_DARK;

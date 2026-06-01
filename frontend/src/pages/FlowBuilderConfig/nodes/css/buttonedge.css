@@ -1,0 +1,64 @@
+  .edgebutton {
+    width: 22px;
+    height: 22px;
+    background: rgba(12, 16, 30, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+    border-radius: 50%;
+    font-size: 12px;
+    line-height: 1;
+    justify-content: center;
+    display: flex;
+    align-self: center;
+    align-items: center;
+    backdrop-filter: blur(8px);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .edgebutton:hover {
+    box-shadow: 0 0 8px 2px rgba(59, 130, 246, 0.4);
+    border-color: rgba(59, 130, 246, 0.6);
+  }
+
+  .react-flow__edge:hover .edgebutton-foreignobject .edgebutton {
+    opacity: 1;
+  }
+
+  .edgebutton-foreignobject:hover .edgebutton {
+    opacity: 1;
+  }
+
+  .edgebutton-foreignobject body {
+    background: transparent;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 40px;
+  }
+
+  .react-flow__edge-path {
+    stroke: #3b82f6;
+    stroke-width: 2px;
+    filter: none;
+    stroke-dasharray: none;
+    animation: none;
+  }
+
+  .react-flow__edge.animated .react-flow__edge-path {
+    stroke-dasharray: 8;
+    animation: neon-dash 1.5s linear infinite;
+  }
+
+  .react-flow__edge.selected .react-flow__edge-path {
+    stroke: #3b82f6;
+    filter: none;
+  }
+
+  @keyframes neon-dash {
+    to {
+      stroke-dashoffset: -16;
+    }
+  }

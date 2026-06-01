@@ -1,0 +1,84 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Testing
+coverage/
+
+# Production builds
+build/
+build.bak/
+dist/
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+*.log
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Backend specific
+backend/public/
+backend/uploads/
+backend/.wwebjs_auth/
+backend/.wwebjs_cache/
+
+# Docker
+docker-compose.yml
+postgres_data/
+redis_data/
+
+# Credentials and backups
+.credentials
+backups/
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Package manager
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Documentação interna / arquivos .md (exceto README.md)
+AUDIT-*.md
+PLAN-*.md
+PLANO-*.md
+SPRINT*.md
+ERROS-*.md
+README-DEV.md
+CLAUDE.md
+docs/
+frontend/docs/

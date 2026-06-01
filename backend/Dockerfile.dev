@@ -1,0 +1,33 @@
+FROM node:20-alpine
+
+# Instalar dependências do sistema
+RUN apk add --no-cache \
+    git \
+    ffmpeg \
+    chromium \
+    nss \
+    freetype \
+    harfbuzz \
+    ca-certificates \
+    ttf-freefont \
+    python3 \
+    make \
+    g++
+
+# Definir variáveis de ambiente para o Chromium
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
+    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+
+WORKDIR /app
+
+# Copiar package.json e instalar dependências
+COPY package*.json ./
+RUN npm install
+
+# Instalar bcryptjs para hash de senhas se não estiver no package.json
+RUN npm install bcryptjs --save
+
+EXPOSE 3000 9229
+
+# Comando padrão (será sobrescrito pelo docker-compose)
+CMD ["npm", "run", "dev:server"]

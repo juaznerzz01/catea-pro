@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt" style="height:100%">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
+  <meta name="theme-color" content="#ffffff" />
+  <meta name="color-scheme" content="light" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+
+  <title id="page-title">Carregando...</title>
+  <link rel="apple-touch-icon" href="%PUBLIC_URL%/apple-touch-icon.png" />
+  <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+  <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+
+  <script>
+    (function() {
+      // i18n + WhiteLabel title
+      try {
+        var cachedName = localStorage.getItem('appName');
+        if (cachedName && cachedName !== 'null') document.title = cachedName;
+      } catch(e) {}
+
+      // Tema
+      var path = location.pathname || "/";
+      var isLogin = /\/(login|signup|forgot-password)(\/|$|\?)/i.test(path) || path === "/";
+      try {
+        if (isLogin) {
+          localStorage.setItem("theme", "light");
+          document.documentElement.classList.remove("dark");
+          document.documentElement.setAttribute("data-theme", "light");
+          document.addEventListener("DOMContentLoaded", function() {
+            document.body.classList.add("login-page");
+          });
+        } else {
+          var theme = localStorage.getItem("theme");
+          if (theme === "dark") {
+            document.documentElement.classList.add("dark");
+            document.documentElement.setAttribute("data-theme", "dark");
+          } else {
+            document.documentElement.classList.remove("dark");
+            document.documentElement.setAttribute("data-theme", "light");
+          }
+        }
+      } catch(e) {
+        document.documentElement.classList.remove("dark");
+        document.documentElement.setAttribute("data-theme", "light");
+      }
+    })();
+  </script>
+
+  <!-- Inter Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* Spinner global */
+    .app-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(107, 70, 193, 0.15);
+      border-top-color: #6B46C1;
+      border-radius: 50%;
+      animation: app-spin 0.7s linear infinite;
+    }
+    @keyframes app-spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Splash: spinner centralizado com fade-out */
+    #splash {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f8f9fa;
+      z-index: 9999;
+      transition: opacity 0.3s ease;
+    }
+    #splash.splash-hide {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* Transição suave para troca de tema - evita flash */
+    body.theme-transitioning,
+    body.theme-transitioning *,
+    body.theme-transitioning *::before,
+    body.theme-transitioning *::after {
+      transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease !important;
+    }
+  </style>
+
+  <script>
+    if (!crossOriginIsolated) { SharedArrayBuffer = ArrayBuffer; }
+  </script>
+  <script src="%PUBLIC_URL%/env-config.js"></script>
+</head>
+
+<body style="height:100%;margin:0;-webkit-font-smoothing:antialiased;font-family:'Inter',sans-serif;">
+  <!-- Splash: apenas spinner -->
+  <div id="splash">
+    <div class="app-spinner"></div>
+  </div>
+
+  <div id="root"></div>
+  <noscript style="display:block;padding:1rem 1.5rem;font-size:.875rem;">Você precisa habilitar o JavaScript para executar este app.</noscript>
+
+  <script>
+    window.finishProgress = function() {
+      var splash = document.getElementById('splash');
+      if (splash) {
+        splash.classList.add('splash-hide');
+        setTimeout(function() { if (splash.parentNode) splash.remove(); }, 350);
+      }
+    };
+  </script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+import Campaign from "../../models/Campaign";
+import AppError from "../../errors/AppError";
+import CampaignShipping from "../../models/CampaignShipping";
+import ContactList from "../../models/ContactList";
+import ContactListItem from "../../models/ContactListItem";
+import Whatsapp from "../../models/Whatsapp";
+import User from "../../models/User";
+import Queue from "../../models/Queue";
+import Tag from "../../models/Tag";
+
+const ShowService = async (
+  id: string | number,
+  companyId: number
+): Promise<Campaign> => {
+  const record = await Campaign.findOne({
+    where: { id, companyId },
+    include: [
+      { model: CampaignShipping },
+      { model: ContactList, include: [{ model: ContactListItem }] },
+      { model: Whatsapp, attributes: ["id", "name"] },
+      { model: User, attributes: ["id", "name"] },
+      { model: Queue, attributes: ["id", "name"] },
+      { model: Tag, as: "tag", attributes: ["id", "name", "color"] },
+    ]
+  });
+
+  if (!record) {
+    throw new AppError("ERR_NO_TICKETNOTE_FOUND", 404);
+  }
+
+  return record;
+};
+
+export default ShowService;
