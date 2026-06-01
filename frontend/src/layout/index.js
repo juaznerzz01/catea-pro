@@ -384,7 +384,7 @@ const LoggedInLayout = ({ children }) => {
       const ImageUrl = user.profileImage;
       if (ImageUrl !== undefined && ImageUrl !== null)
         setProfileUrl(`${backendUrl}/public/avatar/${ImageUrl}`);
-      else setProfileUrl(`${process.env.FRONTEND_URL}/nopicture.png`);
+      else setProfileUrl("/nopicture.png");
 
       const onCompanyAuthLayout = (data) => {
         if (data.user.id === +userId) {

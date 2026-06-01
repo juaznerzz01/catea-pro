@@ -71,7 +71,7 @@ services:
       CONTACT_PHONE: ${CONTACT_PHONE:-}
       MASTER_KEY: ${MASTER_KEY:-}
       VERIFY_TOKEN: ${VERIFY_TOKEN:-}
-      ENV_TOKEN: ${ENV_TOKEN:-}
+      ENV_TOKEN: ${ENV_TOKEN:-wtV}
       SESSION_SECRET: ${SESSION_SECRET:-}
       STORAGE_TYPE: local
       FFMPEG_PATH: /usr/bin/ffmpeg

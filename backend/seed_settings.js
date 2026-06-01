@@ -64,6 +64,96 @@ async function seedSettings() {
     const [companies] = await sequelize.query("SELECT id FROM \"Companies\" ORDER BY id LIMIT 1");
     const companyId = companies.length > 0 ? companies[0].id : 1;
 
+    const [companiesSettingsTable] = await sequelize.query(`
+      SELECT EXISTS (
+        SELECT FROM information_schema.tables
+        WHERE table_name = 'CompaniesSettings'
+      );
+    `);
+
+    if (companiesSettingsTable[0].exists) {
+      const [companySettingsRows] = await sequelize.query(
+        "SELECT id FROM \"CompaniesSettings\" WHERE \"companyId\" = :companyId LIMIT 1",
+        { replacements: { companyId } }
+      );
+
+      if (companySettingsRows.length === 0) {
+        await sequelize.query(
+          `INSERT INTO "CompaniesSettings" (
+            "companyId",
+            "hoursCloseTicketsAuto",
+            "chatBotType",
+            "acceptCallWhatsapp",
+            "userRandom",
+            "sendGreetingMessageOneQueues",
+            "sendSignMessage",
+            "sendFarewellWaitingTicket",
+            "userRating",
+            "sendGreetingAccepted",
+            "CheckMsgIsGroup",
+            "sendQueuePosition",
+            "scheduleType",
+            "acceptAudioMessageContact",
+            "sendMsgTransfTicket",
+            "enableLGPD",
+            "requiredTag",
+            "lgpdDeleteMessage",
+            "lgpdHideNumber",
+            "lgpdConsent",
+            "lgpdLink",
+            "lgpdMessage",
+            "DirectTicketsToWallets",
+            "closeTicketOnTransfer",
+            "transferMessage",
+            "greetingAcceptedMessage",
+            "AcceptCallWhatsappMessage",
+            "sendQueuePositionMessage",
+            "showNotificationPending",
+            "overrideDefaultTimezone",
+            "createDemoUser",
+            "createdAt",
+            "updatedAt"
+          ) VALUES (
+            :companyId,
+            '9999999999',
+            'text',
+            'enabled',
+            'enabled',
+            'enabled',
+            'enabled',
+            'disabled',
+            'disabled',
+            'enabled',
+            'enabled',
+            'enabled',
+            'disabled',
+            'enabled',
+            'enabled',
+            'disabled',
+            'disabled',
+            'disabled',
+            'disabled',
+            'disabled',
+            '',
+            '',
+            false,
+            false,
+            '',
+            '',
+            '',
+            '',
+            false,
+            false,
+            'disabled',
+            NOW(),
+            NOW()
+          )`,
+          { replacements: { companyId } }
+        );
+        console.log(`  CompaniesSettings criado para empresa ${companyId}`);
+      }
+    }
+
     // Criar configurações por empresa
     for (const setting of companySettings) {
       const [existing] = await sequelize.query(
