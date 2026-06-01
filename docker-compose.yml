@@ -1,0 +1,153 @@
+services:
+  postgres:
+    image: postgres:13-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-chatia}
+      POSTGRES_USER: ${DB_USER:-chatia}
+      POSTGRES_PASSWORD: ${DB_PASS:-change_me_db_password}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-chatia} -d ${DB_NAME:-chatia}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - chatia
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-change_me_redis_password}
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a ${REDIS_PASSWORD:-change_me_redis_password} ping | grep PONG"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - chatia
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    expose:
+      - "3000"
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: 3000
+      BACKEND_URL: ${BACKEND_URL}
+      FRONTEND_URL: ${FRONTEND_URL}
+      DB_DIALECT: postgres
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME:-chatia}
+      DB_USER: ${DB_USER:-chatia}
+      DB_PASS: ${DB_PASS:-change_me_db_password}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-change_me_redis_password}
+      REDIS_DB: ${REDIS_DB:-0}
+      IO_REDIS_SERVER: redis
+      IO_REDIS_PORT: 6379
+      IO_REDIS_PASSWORD: ${REDIS_PASSWORD:-change_me_redis_password}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@chatia.local}
+      ADMIN_USERNAME: ${ADMIN_USERNAME:-admin@chatia.local}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-Admin123456}
+      COMPANY_NAME: ${COMPANY_NAME:-ChatIA}
+      CONTACT_PHONE: ${CONTACT_PHONE:-}
+      MASTER_KEY: ${MASTER_KEY:-}
+      VERIFY_TOKEN: ${VERIFY_TOKEN:-}
+      ENV_TOKEN: ${ENV_TOKEN:-}
+      SESSION_SECRET: ${SESSION_SECRET:-}
+      STORAGE_TYPE: local
+      FFMPEG_PATH: /usr/bin/ffmpeg
+      PUPPETEER_EXECUTABLE_PATH: /usr/bin/chromium-browser
+      PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: "true"
+      RUN_MIGRATIONS: ${RUN_MIGRATIONS:-true}
+      RUN_SEED_SETTINGS: ${RUN_SEED_SETTINGS:-true}
+      RUN_SEED_ADMIN: ${RUN_SEED_ADMIN:-true}
+      BULL_BOARD: ${BULL_BOARD:-false}
+      BULL_USER: ${BULL_USER:-admin}
+      BULL_PASS: ${BULL_PASS:-}
+      SENTRY_DSN: ${SENTRY_DSN:-}
+      MAIL_HOST: ${MAIL_HOST:-}
+      MAIL_PORT: ${MAIL_PORT:-}
+      MAIL_USER: ${MAIL_USER:-}
+      MAIL_PASS: ${MAIL_PASS:-}
+      MAIL_FROM: ${MAIL_FROM:-}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      SMTP_SECURE: ${SMTP_SECURE:-false}
+      SMTP_FROM: ${SMTP_FROM:-}
+      FACEBOOK_APP_ID: ${FACEBOOK_APP_ID:-}
+      FACEBOOK_APP_SECRET: ${FACEBOOK_APP_SECRET:-}
+      GERENCIANET_CLIENT_ID: ${GERENCIANET_CLIENT_ID:-}
+      GERENCIANET_CLIENT_SECRET: ${GERENCIANET_CLIENT_SECRET:-}
+      GERENCIANET_PIX_CERT: ${GERENCIANET_PIX_CERT:-}
+      GERENCIANET_SANDBOX: ${GERENCIANET_SANDBOX:-false}
+      MP_ACCESS_TOKEN: ${MP_ACCESS_TOKEN:-}
+      FEATURE_COMPANY_DOCUMENT_OPTIONAL: ${FEATURE_COMPANY_DOCUMENT_OPTIONAL:-false}
+      FEATURE_CONTACTS_FIX: ${FEATURE_CONTACTS_FIX:-false}
+      FEATURE_CONTACTS_NORMALIZE_E164: ${FEATURE_CONTACTS_NORMALIZE_E164:-false}
+      FEATURE_CONTACTS_ONLY_AGENDA_FILTER: ${FEATURE_CONTACTS_ONLY_AGENDA_FILTER:-false}
+      FEATURE_CONTACTS_SOURCE_FIELD: ${FEATURE_CONTACTS_SOURCE_FIELD:-false}
+      FLOW_MENU_COOLDOWN_SEC: ${FLOW_MENU_COOLDOWN_SEC:-30}
+      DEMO: ${DEMO:-false}
+      APP_TRIALEXPIRATION: ${APP_TRIALEXPIRATION:-}
+    volumes:
+      - backend_public:/app/public
+      - backend_private:/app/private
+    networks:
+      - chatia
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - backend
+    expose:
+      - "3000"
+    environment:
+      BACKEND_URL: ${BACKEND_URL}
+      COMPANY_NAME: ${COMPANY_NAME:-ChatIA}
+      CONTACT_PHONE: ${CONTACT_PHONE:-}
+      FACEBOOK_APP_ID: ${FACEBOOK_APP_ID:-}
+      REACT_APP_BACKEND_URL: ${REACT_APP_BACKEND_URL:-}
+      REACT_APP_NAME_SYSTEM: ${REACT_APP_NAME_SYSTEM:-ChatIA}
+      REACT_APP_COMPANY_NAME: ${REACT_APP_COMPANY_NAME:-ChatIA}
+      REACT_APP_NUMBER_SUPPORT: ${REACT_APP_NUMBER_SUPPORT:-}
+      REACT_APP_HOURS_CLOSE_TICKETS_AUTO: ${REACT_APP_HOURS_CLOSE_TICKETS_AUTO:-9999}
+      REACT_APP_PRIMARY_COLOR: ${REACT_APP_PRIMARY_COLOR:-#6B46C1}
+      REACT_APP_PRIMARY_DARK: ${REACT_APP_PRIMARY_DARK:-#4C1D95}
+      REACT_APP_FACEBOOK_APP_ID: ${REACT_APP_FACEBOOK_APP_ID:-}
+      REACT_APP_REQUIRE_BUSINESS_MANAGEMENT: ${REACT_APP_REQUIRE_BUSINESS_MANAGEMENT:-FALSE}
+    networks:
+      - chatia
+
+networks:
+  chatia:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:
+  backend_public:
+  backend_private:

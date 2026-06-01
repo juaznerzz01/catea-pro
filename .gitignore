@@ -53,8 +53,7 @@ backend/uploads/
 backend/.wwebjs_auth/
 backend/.wwebjs_cache/
 
-# Docker
-docker-compose.yml
+# Docker runtime data
 postgres_data/
 redis_data/
 
