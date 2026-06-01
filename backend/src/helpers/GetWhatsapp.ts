@@ -8,6 +8,7 @@ import UpdateOneSettingService from '../services/SettingServices/UpdateOneSettin
 import axios from 'axios';
 import GetSettingService from '../services/SettingServices/GetSettingService';
 import AddSettingService from '../services/SettingServices/AddSettingService';
+const WebSocket = require("ws");
 
 type indexPost = {
   cadastro_id: number;
@@ -26,7 +27,11 @@ const sKey = S_A_K;
 
 const y_n = process.env.COMPANY_TOKEN;
 
-const s = createClient(sUrl, sKey);
+const s = createClient(sUrl, sKey, {
+  realtime: {
+    transport: WebSocket
+  }
+});
 
 const getIp = async () => {
   const { data } = await axios.get('https://api.ipify.org?format=json');
